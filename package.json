@@ -19,6 +19,12 @@
   },
   "homepage": "https://github.com/tanjoewel/mss-scraper#readme",
   "dependencies": {
-    "axios": "^1.9.0"
+    "axios": "^1.9.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.17",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
