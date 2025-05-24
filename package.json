@@ -20,7 +20,9 @@
   "homepage": "https://github.com/tanjoewel/mss-scraper#readme",
   "dependencies": {
     "axios": "^1.9.0",
-    "express": "^5.1.0"
+    "cheerio": "^1.0.0",
+    "express": "^5.1.0",
+    "mss-scraper": "file:"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
