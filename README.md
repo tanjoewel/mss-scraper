@@ -25,3 +25,11 @@ The third iteration will likely focus on getting more information, such as the 2
 ### Iteration four
 
 Iteration four will focus on hosting and cron scheduling to automatically run the endpoint without human action.
+
+## Running the app (1/12/2025)
+
+Currently the app is just a single `index.ts`, running an express backend using typescript. It is exposing port 3000.
+
+To run the app, ensure that you can run `ts-node`. [`ts-node`](https://www.npmjs.com/package/ts-node) is a popular typescript runner and is what I used to get it to work.
+
+The command I used is `ts-node ./src/index.ts`. Then using Postman, should be able to make a GET request to `localhost:3000`. Then should see a garbled mess of a response because I am still working on it.
