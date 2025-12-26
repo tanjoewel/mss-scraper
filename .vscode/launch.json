@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // {
+    //   "name": "Debug Express (ts-node)",
+    //   "type": "node",
+    //   "request": "launch",
+    //   "runtimeArgs": [
+    //     "-r",
+    //     "ts-node/register"
+    //   ],
+    //   "args": [
+    //     "${workspaceFolder}/src/index.ts"
+    //   ],
+    //   "cwd": "${workspaceFolder}",
+    //   "env": {
+    //     "NODE_ENV": "development"
+    //   },
+    //   "skipFiles": [
+    //     "<node_internals>/**"
+    //   ],
+    //   "sourceMaps": true,
+    //   "outFiles": []
+    // }
+    {
+      "name": "Attach to Express (ts-node)",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "restart": true,
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ]
+}
