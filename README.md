@@ -34,6 +34,8 @@ Run `npm run start` (the script is defined in `package.json`).
 
 Then using Postman, should be able to make a GET request to `localhost:3000`. Then should see a garbled mess of a response because I am still working on it.
 
+To debug the app, either go to the run and debug tab and choose the `Debug launch` process and run it, or run `npm run debug` and go to the run and debug tab and choose the `Debug attach` process and run it to attach the debugger to the running process.
+
 ## Stuff I learned
 
 Setting up typescript is not as simple as I thought it was.
@@ -51,3 +53,18 @@ Setting up typescript is not as simple as I thought it was.
   - I am currently not too sure what the `typescript` npm package is for.
     - Seems like it provides the typescript compiler. It is needed for `ts-node` to work because `ts-node` does not have a compiler internally.
 - Next, we need to compile and run it. `ts-node` is a runner
+
+## Notes
+
+- First understand Cheerio parsing and traversal. `$` you get from `cheerio.load` is a tree representation, but `$` is NOT the actual tree, it is a function that allows you to traverse the tree easily.
+- Understand the structure of the HTML at the area of interest. It is not so simple as finding "High" and then looking at the element below it, it is more like
+  - a div that contains a h4 that says "today's highs and lows"
+  - or actually there is a div that contains an image where the alt text is "highest temperature recorded today"
+    - so we can find this image, assuming the alt text doesn't change, and then get the div above it, and then get the div below that and it contains the high temp
+    - the low temp is exactly the same process but the alt text is "lowest temperature recorded today"
+  - I did the second one, and it seems to work
+
+Progress as of 27/12/25 is that I have something that works, but
+
+- Only did it for high temp. I want to abstract it out into functions so that it is easier to do the low temp without having to duplicate too much code, and also possibly design it in a way that is easy to use for rainfall and stuff (not strictly necessary, but it will be a good indication of good design)
+- I need to revisit the response body. I need to handle cases where the scraping fails because I should not assume that the structure will always remain the same as it does. If the structure changes and so my code fails, I want to know exactly where it fails.
