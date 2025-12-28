@@ -20,16 +20,14 @@ app.get("/", async (req, res) => {
     let lowTemp: string = "";
 
     const highTempParsed: parseHTMLResults = queryHighestLowestValuesMSS("highest temperature recorded today", $);
+    const lowTempParsed: parseHTMLResults = queryHighestLowestValuesMSS("lowest temperature recorded today", $);
 
     highTemp = `High temp: ${highTempParsed.value} at ${highTempParsed.location} at time ${highTempParsed.time}`;
-    // highTemp = highTempRaw.text(); // then need to process this text
-    const img2 = $("img[alt='lowest temperature recorded today']")
-    const lowTempRaw = $(img2.parent().next()).children().text();
-    lowTemp = lowTempRaw;
+    lowTemp = `Low temp: ${lowTempParsed.value} at ${lowTempParsed.location} at time ${lowTempParsed.time}`;
     const result = {
       highTemp,
       lowTemp,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toLocaleString(),
     };
     res.send(result);
   } catch (err) {
