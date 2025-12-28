@@ -18,16 +18,10 @@ app.get("/", async (req, res) => {
     // console.log($);
     let highTemp: string = "";
     let lowTemp: string = "";
-    const img1 = $("img[alt='highest temperature recorded today']")
-    const divContainingHigh = img1.parent().next(); // maybe cheerio-rize it again and then get the h4 inside it?
-    // i think instead of just getting all the children and the text and processing it using string functions i should get the h4 which contains the temperature, and the p element which contains the location
-    const highTempValue: string = divContainingHigh.find("h4").text().trim();
-    // const highTempp = divContainingHigh.find("p").text(); // for some reason even though there is a </br> in the raw HTML, splitting it by \n doesn't work.
-    const highTempp: string | null = divContainingHigh.find("p").html();
-    const highTemppArr: string[] = highTempp!.split("<br>"); // handle the case where it is null in the future - needs special consideration such as formatting the response appropriately
-    const highTempLocation: string = highTemppArr[0].trim();
-    const highTempTime: string = highTemppArr[1].trim();
-    highTemp = `High temp: ${highTempValue} at ${highTempLocation} at time ${highTempTime}`;
+
+    const highTempParsed: parseHTMLResults = queryHighestLowestValuesMSS("highest temperature recorded today", $);
+
+    highTemp = `High temp: ${highTempParsed.value} at ${highTempParsed.location} at time ${highTempParsed.time}`;
     // highTemp = highTempRaw.text(); // then need to process this text
     const img2 = $("img[alt='lowest temperature recorded today']")
     const lowTempRaw = $(img2.parent().next()).children().text();
@@ -43,3 +37,29 @@ app.get("/", async (req, res) => {
     res.send("Error fetching response from MSS website");
   }
 });
+
+interface parseHTMLResults {
+  value: string;
+  location: string;
+  time: string;
+}
+
+/**
+ * Not sure if this is the best way to abstract this out, but this should at least be a work in progress.
+ * This function (currently) takes in the cheerio.CheerioAPI and an alt text, and parses using a very specific structure.
+ * Specifically, it finds an image with the given alt text, then finds the div immediately after the div encompassing the image.
+ * This div contains a h4 with the value, and a p element with the location and time separated by a <br/> element
+ * @param altText alt text of image
+ * Returns a formatted string (for now), not ideal i think
+ */
+function queryHighestLowestValuesMSS(altText: string, $: cheerio.CheerioAPI): parseHTMLResults {
+  const jqueryStringForImage: string = `img[alt="${altText}"]`
+  const divContainingImage = $(jqueryStringForImage).parent();
+  const succeedingDiv = divContainingImage.next();
+  const value: string = succeedingDiv.find("h4").text().trim();
+  const pElement: string | null = succeedingDiv.find("p").html();
+  const pArr: string[] = pElement!.split("<br>"); // handle the case where it is null in the future - needs special consideration such as formatting the response appropriately, and also idk if it is a good idea to just split like this it might break if the format changes (although everything will break if the format changes)
+  const location: string = pArr[0].trim();
+  const time: string = pArr[1].trim();
+  return {value, location, time};
+}
