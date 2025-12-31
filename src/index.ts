@@ -4,6 +4,7 @@ import * as cheerio from "cheerio";
 import type { Element } from 'domhandler';
 
 import { ParsingError } from "./errors";
+import {parsePResults, parseHTMLResults} from "./MSSParser";
 
 const app = express();
 
@@ -47,21 +48,11 @@ app.get("/", async (req, res) => {
   }
 });
 
-interface parseHTMLResults {
-  value: string;
-  location: string;
-  time: string | undefined;
-}
-
 interface errorReturn {
   errorMsg: string;
   from: string;
 }
 
-interface parsePResults {
-  isMultipleLocations: boolean;
-  array: string[]
-}
 
 /**
  * Not sure if this is the best way to abstract this out, but this should at least be a work in progress.
