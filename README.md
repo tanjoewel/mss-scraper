@@ -12,6 +12,10 @@ The explicit goal is to, with a click of a button, obtain information from the w
 
 For the first iteration, this application will be hosted locally, with the request being sent with cURL or Postman. The return will simply be a JSON object.
 
+Feature done 28/12/2025, but there are some issues
+
+- Currently it only works if it the highest and lowest temp is in a unique place and time. Sometimes, it is like "multiple places" or something i cannot remember. in that case, i cannot split by `<br>`, and i need to determine a proper return.
+
 ## Future iterations
 
 ### Iteration two
