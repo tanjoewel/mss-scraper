@@ -2,6 +2,16 @@
 
 A typescript based web scraper for the Meteorological Service Singapore website
 
+## Legal
+
+As of 1/1/2026, the page(s) I am scraping is not explicitly disallowed. Below is a screenshot of `robots.txt` for the MSS website together with the timestamp on the bottom right corner.
+
+![MSS robots.txt](./assets/readme-mss-robotstxt.png)
+
+List of pages I am scraping (domain is [https://www.weather.gov.sg](https://www.weather.gov.sg/home/)):
+
+- `/home`
+
 ## Goal
 
 The explicit goal is to, with a click of a button, obtain information from the website. For the first iteration, we only aim for the following information:
@@ -16,11 +26,24 @@ Feature done 28/12/2025, but there are some issues
 
 - Currently it only works if it the highest and lowest temp is in a unique place and time. Sometimes, it is like "multiple places" or something i cannot remember. in that case, i cannot split by `<br>`, and i need to determine a proper return.
 
+31/12/2025 handled case where the location and time simply says "Few Locations".
+
+### Iteration 1.5?
+
+As of 1/1/2026, I have the basic functionality up and running. However, there are still some things that could be polished
+
+- Scraping is inherently unpredictable. The control of the HTML structure is with the creator of the webpage, not of me. As a result, I need a robust error flow to be able to quickly diagnose the issue.
+  - However, in order to do this the best way would be to have a error stack trace. That does require considerable amount of work, as I would have to restructure my functions to be modular, and to clearly distinguish between the leaf functions, the middle functions and the highest level parsing functions.
+- Currently don't really like how my files are structured. I have been thinking about it but no real progress on a clean design yet.
+- Migrate code to be MVC style? I don't think it is too necessary to be honest with how small this project actually is.
+
 ## Future iterations
 
 ### Iteration two
 
 The second iteration will focus on reading and manipulating an external file, most likely a CSV file
+
+- Explore using the in built javascript file methods before going to a library.
 
 ### Iteration three
 
