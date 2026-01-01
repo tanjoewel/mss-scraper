@@ -1,10 +1,9 @@
 import express from "express";
 import Axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
-import type { Element } from 'domhandler';
+import type { Element } from "domhandler";
 
-import { ParsingError } from "./errors";
-import {parsePResults, parseHTMLResults} from "./MSSParser";
+import { parsePResults, parseHTMLResults, MSSParser } from "./MSSParser";
 
 const app = express();
 
@@ -29,12 +28,12 @@ app.get("/", async (req, res) => {
     if (highTempParsed.time) {
       highTemp = `High temp: ${highTempParsed.value} at ${highTempParsed.location} at time ${highTempParsed.time}`;
     } else {
-      highTemp = `High temp: ${highTempParsed.value} at ${highTempParsed.location}`
+      highTemp = `High temp: ${highTempParsed.value} at ${highTempParsed.location}`;
     }
     if (lowTempParsed.time) {
       lowTemp = `Low temp: ${lowTempParsed.value} at ${lowTempParsed.location} at time ${lowTempParsed.time}`;
     } else {
-      lowTemp = `Low temp: ${lowTempParsed.value} at ${lowTempParsed.location}`
+      lowTemp = `Low temp: ${lowTempParsed.value} at ${lowTempParsed.location}`;
     }
     const result = {
       highTemp,
@@ -53,7 +52,6 @@ interface errorReturn {
   from: string;
 }
 
-
 /**
  * Not sure if this is the best way to abstract this out, but this should at least be a work in progress.
  * This function (currently) takes in the cheerio.CheerioAPI and an alt text, and parses using a very specific structure.
@@ -63,39 +61,17 @@ interface errorReturn {
  * Returns a JSON
  */
 function queryHighestLowestValuesMSS(altText: string, $: cheerio.CheerioAPI): parseHTMLResults {
-  const jqueryStringForImage: string = `img[alt="${altText}"]`
+  const jqueryStringForImage: string = `img[alt="${altText}"]`;
   const divContainingImage = $(jqueryStringForImage).parent();
   const succeedingDiv = divContainingImage.next();
   const value: string = succeedingDiv.find("h4").text().trim();
-  const pElement: cheerio.Cheerio<Element>  = succeedingDiv.find("p");
-  const parsePResponse: parsePResults = parsePElement(pElement) // handle the case where it is null in the future - needs special consideration such as formatting the response appropriately, and also idk if it is a good idea to just split like this it might break if the format changes (although everything will break if the format changes)
+  const pElement: cheerio.Cheerio<Element> = succeedingDiv.find("p");
+  const parsePResponse: parsePResults = MSSParser.parsePElement(pElement);
   if (parsePResponse.isMultipleLocations) {
-    return {value, location: "multiple locations", time: undefined}
+    return { value, location: "multiple locations", time: undefined };
   }
   const pArr: string[] = parsePResponse.array;
   const location: string = pArr[0].trim();
   const time: string = pArr[1].trim();
-  return {value, location, time};
-}
-
-/**
- * The p element can have multiple different variations, so this function is to parse it and to deal with cases where the element may not be structured as expected.
- * Scraping is inherently uncertain! Should never assume that the HTML will be correct...
- * @param element The p element that we want to parse.
- */
-function parsePElement(element: cheerio.Cheerio<Element>): parsePResults {
-  const htmlString: string = getHtmlString("parsePElement", element); // this is not good, but the alternative is quite complex so I will leave it at this first.
-  if (htmlString.includes("Location")) { // refine this when i get a concrete example
-    return {isMultipleLocations: true, array: []}
-  } else {
-    return {isMultipleLocations: false, array: htmlString.split("<br>")}
-  }
-}
-
-function getHtmlString(source: string, element: cheerio.Cheerio<Element>): string {
-  const htmlString: string | null = element.html();
-  if (!htmlString) {
-    throw new ParsingError(source, "Element provided could not be converted into a HTML string");
-  }
-  return htmlString;
+  return { value, location, time };
 }
