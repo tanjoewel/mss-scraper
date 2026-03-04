@@ -19,9 +19,9 @@ app.get("/", async (req, res) => {
     const data: string = GetResponse.data;
     const $: cheerio.CheerioAPI = cheerio.load(data);
 
-    const highTempParsed: parseHTMLResults = queryHighestLowestValuesMSS("highest temperature recorded today", $);
-    const lowTempParsed: parseHTMLResults = queryHighestLowestValuesMSS("lowest temperature recorded today", $);
-    // const highRainfallParsed: parseHTMLResults = queryHighestLowestValuesMSS("")
+    const highTempParsed: parseHTMLResults = queryHighestLowestTemperature("highest temperature recorded today", $);
+    const lowTempParsed: parseHTMLResults = queryHighestLowestTemperature("lowest temperature recorded today", $);
+    // const highRainfallParsed: parseHTMLResults = queryHighestLowestTemperature("")
 
     let highTemp: string;
     let lowTemp: string;
@@ -62,9 +62,10 @@ interface errorReturn {
  * Specifically, it finds an image with the given alt text, then finds the div immediately after the div encompassing the image.
  * This div contains a h4 with the value, and a p element with the location and time separated by a <br/> element
  * @param altText alt text of image
+ * @param $ the cheerio API
  * Returns a JSON
  */
-function queryHighestLowestValuesMSS(altText: string, $: cheerio.CheerioAPI): parseHTMLResults {
+function queryHighestLowestTemperature(altText: string, $: cheerio.CheerioAPI): parseHTMLResults {
   const jqueryStringForImage: string = `img[alt="${altText}"]`;
   const divContainingImage = $(jqueryStringForImage).parent();
   const succeedingDiv = divContainingImage.next();
@@ -80,6 +81,12 @@ function queryHighestLowestValuesMSS(altText: string, $: cheerio.CheerioAPI): pa
   return { value, location, time };
 }
 
+/**
+ * Parses the forecast based on the alt text from the cheerio API.
+ * As of 4/3/2026, the forecast temperature is in a h2 in a succeeding div from the image.
+ * @param altText alt text of image
+ * @param $ the cheerio API
+ */
 function queryForecast(altText: string, $: cheerio.CheerioAPI): string {
   const jqueryStringForImage: string = `img[alt="${altText}"]`;
   const divContainingImage = $(jqueryStringForImage).parent();
