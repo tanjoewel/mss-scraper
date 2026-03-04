@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 import type { Element } from "domhandler";
-import { ParsingError, ParseError } from "./errors";
+import { ParsingError, ParseError } from "../parsingError";
 
 /**
  * I am not ambitious enough to make a general HTML parser just yet, so there will be a lot of hardcoding of strings and assumptions made that is specific to the MSS website.
