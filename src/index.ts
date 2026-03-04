@@ -23,23 +23,7 @@ app.get("/", async (req, res) => {
     const lowTempParsed: parseHTMLResults = queryHighestLowestTemperature("lowest temperature recorded today", $);
     // const highRainfallParsed: parseHTMLResults = queryHighestLowestTemperature("")
 
-    let highTemp: string;
-    let lowTemp: string;
-    if (highTempParsed.time) {
-      highTemp = `High temp: ${highTempParsed.value} at ${highTempParsed.location} at time ${highTempParsed.time}`;
-    } else {
-      highTemp = `High temp: ${highTempParsed.value} at ${highTempParsed.location}`;
-    }
-    if (lowTempParsed.time) {
-      lowTemp = `Low temp: ${lowTempParsed.value} at ${lowTempParsed.location} at time ${lowTempParsed.time}`;
-    } else {
-      lowTemp = `Low temp: ${lowTempParsed.value} at ${lowTempParsed.location}`;
-    }
-    const result = {
-      highTemp,
-      lowTemp,
-      timestamp: new Date().toLocaleString(),
-    };
+    const result: Response = formatResponse(highTempParsed, lowTempParsed);
 
     let highForecast: string = queryForecast("Forecast maximum", $);
     let lowForecast: string = queryForecast("Forecast minimum temperature", $);
@@ -51,9 +35,38 @@ app.get("/", async (req, res) => {
   }
 });
 
-interface errorReturn {
-  errorMsg: string;
-  from: string;
+type Response = {
+  highTemp: string;
+  lowTemp: string;
+  timestamp: string;
+};
+
+/**
+ * I kinda just wanted to un-bloat the main controller method. This function doesn't really do much it is just verbose.
+ * If I want to change the response
+ * @param highTempParsed
+ * @param lowTempParsed
+ * @returns
+ */
+function formatResponse(highTempParsed: parseHTMLResults, lowTempParsed: parseHTMLResults): Response {
+  let highTemp: string;
+  let lowTemp: string;
+  if (highTempParsed.time) {
+    highTemp = `High temp: ${highTempParsed.value} at ${highTempParsed.location} at time ${highTempParsed.time}`;
+  } else {
+    highTemp = `High temp: ${highTempParsed.value} at ${highTempParsed.location}`;
+  }
+  if (lowTempParsed.time) {
+    lowTemp = `Low temp: ${lowTempParsed.value} at ${lowTempParsed.location} at time ${lowTempParsed.time}`;
+  } else {
+    lowTemp = `Low temp: ${lowTempParsed.value} at ${lowTempParsed.location}`;
+  }
+  const result = {
+    highTemp,
+    lowTemp,
+    timestamp: new Date().toLocaleString(),
+  };
+  return result;
 }
 
 /**
