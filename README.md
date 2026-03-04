@@ -37,17 +37,25 @@ As of 1/1/2026, I have the basic functionality up and running. However, there ar
 - Currently don't really like how my files are structured. I have been thinking about it but no real progress on a clean design yet.
 - Migrate code to be MVC style? I don't think it is too necessary to be honest with how small this project actually is.
 
+4/3/2026
+
+I refactored the methods into files on ChatGPT's suggestion. I don't really want to rely on ChatGPT too much, but without previous experience it is kind of hard to make these kinds of decisions. What it says does make sense...
+
+I have also decided to move the iterations around, so iteration two will be getting more info, iteration three will be the filesystem integration.
+
 ## Future iterations
 
 ### Iteration two
 
-The second iteration will focus on reading and manipulating an external file, most likely a CSV file
+The second iteration will likely focus on getting more information, such as the 24 hour forecast, the 4 day outlook, etc.
 
-- Explore using the in built javascript file methods before going to a library.
+As of 4/3/2026 the daily forecast is done (the high and low temperature for the day).
 
 ### Iteration three
 
-The third iteration will likely focus on getting more information, such as the 24 hour forecast, the 4 day outlook, etc.
+The third iteration will focus on reading and manipulating an external file, most likely a CSV file
+
+- Explore using the in built javascript file methods before going to a library.
 
 ### Iteration four
 
