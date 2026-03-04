@@ -40,6 +40,10 @@ app.get("/", async (req, res) => {
       lowTemp,
       timestamp: new Date().toLocaleString(),
     };
+
+    let highForecast: string = queryForecast("Forecast maximum", $);
+    let lowForecast: string = queryForecast("Forecast minimum temperature", $);
+
     res.send(result);
   } catch (err) {
     console.log(err);
@@ -74,4 +78,12 @@ function queryHighestLowestValuesMSS(altText: string, $: cheerio.CheerioAPI): pa
   const location: string = pArr[0].trim();
   const time: string = pArr[1].trim();
   return { value, location, time };
+}
+
+function queryForecast(altText: string, $: cheerio.CheerioAPI): string {
+  const jqueryStringForImage: string = `img[alt="${altText}"]`;
+  const divContainingImage = $(jqueryStringForImage).parent();
+  const succeedingDiv = divContainingImage.next();
+  const value: string = succeedingDiv.find("h2").text().trim();
+  return value;
 }
