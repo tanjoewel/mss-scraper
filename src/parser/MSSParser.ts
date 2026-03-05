@@ -1,6 +1,22 @@
 import * as cheerio from "cheerio";
 import type { Element } from "domhandler";
-import { ParsingError, ParseError } from "../parsingError";
+import { ParseError } from "../parsingError";
+
+export interface parsePResults {
+  isMultipleLocations: boolean;
+  array: string[];
+}
+
+export interface getHighestLowestTemperatureResult {
+  value: string;
+  location: string;
+  time: string | undefined;
+}
+
+export interface getHighestLowestRainfallResult {
+  value: string;
+  location: string;
+}
 
 /**
  * I am not ambitious enough to make a general HTML parser just yet, so there will be a lot of hardcoding of strings and assumptions made that is specific to the MSS website.
@@ -55,7 +71,7 @@ export class MSSParser {
  * @param $ the cheerio API
  * Returns a JSON
  */
-export function queryHighestLowestTemperature(altText: string, $: cheerio.CheerioAPI): parseHTMLResults {
+export function queryHighestLowestTemperature(altText: string, $: cheerio.CheerioAPI): getHighestLowestTemperatureResult {
   const jqueryStringForImage: string = `img[alt="${altText}"]`;
   const divContainingImage = $(jqueryStringForImage).parent();
   const succeedingDiv = divContainingImage.next();
@@ -72,6 +88,28 @@ export function queryHighestLowestTemperature(altText: string, $: cheerio.Cheeri
 }
 
 /**
+ * This is very similar to queryHighestLowestTemperature, just because the structure is very similar, it just does not have the time of the highest rainfall.
+ * I am not sure what it looks like when there are multiple locations with the same rainfall. I suppose I have to wait for a day that has absolutely no rain and then see what it looks like.
+ * @param altText alt text of image
+ * @param $ the cheerio API
+ * @returns the value and location of the highest and lowest rainfall.
+ */
+export function queryHighestLowestRainfall(altText: string, $: cheerio.CheerioAPI): getHighestLowestRainfallResult {
+  const jqueryStringForImage: string = `img[alt="${altText}"]`;
+  const divContainingImage = $(jqueryStringForImage).parent();
+  const succeedingDiv = divContainingImage.next();
+  const value: string = succeedingDiv.find("h4").text().trim();
+  const pElement: cheerio.Cheerio<Element> = succeedingDiv.find("p");
+  const parsePResponse: parsePResults = MSSParser.parsePElement(pElement);
+  if (parsePResponse.isMultipleLocations) {
+    return { value, location: "multiple locations" };
+  }
+  const pArr: string[] = parsePResponse.array;
+  const location: string = pArr[0].trim();
+  return { value, location };
+}
+
+/**
  * Parses the forecast based on the alt text from the cheerio API.
  * As of 4/3/2026, the forecast temperature is in a h2 in a succeeding div from the image.
  * @param altText alt text of image
@@ -83,15 +121,4 @@ export function queryForecast(altText: string, $: cheerio.CheerioAPI): string {
   const succeedingDiv = divContainingImage.next();
   const value: string = succeedingDiv.find("h2").text().trim();
   return value;
-}
-
-export interface parsePResults {
-  isMultipleLocations: boolean;
-  array: string[];
-}
-
-export interface parseHTMLResults {
-  value: string;
-  location: string;
-  time: string | undefined;
 }

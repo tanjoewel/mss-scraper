@@ -1,4 +1,4 @@
-import { parseHTMLResults } from "../parser/MSSParser";
+import { getHighestLowestTemperatureResult } from "../parser/MSSParser";
 
 export type MSSResponse = {
   highTemp: string;
@@ -13,7 +13,7 @@ export type MSSResponse = {
  * @param lowTempParsed
  * @returns
  */
-export function formatResponse(highTempParsed: parseHTMLResults, lowTempParsed: parseHTMLResults): MSSResponse {
+export function formatResponse(highTempParsed: getHighestLowestTemperatureResult, lowTempParsed: getHighestLowestTemperatureResult): MSSResponse {
   let highTemp: string;
   let lowTemp: string;
   if (highTempParsed.time) {
